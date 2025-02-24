@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -35,7 +36,7 @@ func Get(cfg config.GetConfig) {
 		fmt.Printf("Card: %s", card)
 	}
 
-	//Save CSV
+	saveCSV(cards)
 }
 
 func getCards(boardid string, apikey string, apitoken string) []cardresponse {
@@ -77,6 +78,31 @@ func filterCards(cards []cardresponse, filter string) (filtered []cardresponse) 
 	return filtered
 }
 
-func saveCSV() {
+func saveCSV(cards []cardresponse) {
+
+	saves := [][]string{
+		{"id", "name"},
+	}
+
+	for _, card := range cards {
+
+		entry := []string{card.ID, card.Name}
+		saves = append(saves, entry)
+	}
+
+	csvFile, err := os.Create("cards.csv")
+
+	if err != nil {
+		fmt.Println("Error creating CSV file: ", err)
+	}
+
+	w := csv.NewWriter(csvFile)
+	w.WriteAll(saves)
+
+	if err := w.Error(); err != nil {
+		fmt.Println("Error writing to csv file: ", err)
+		os.Exit(1)
+	}
+	csvFile.Close()
 
 }
