@@ -43,13 +43,12 @@ func main() {
 		cfg := config.DeleteConfig{File: *filePtr}
 		commands.Delete(cfg)
 	case "-h", "--help":
-		fmt.Printf("set-credentials: \n")
+		fmt.Printf("\nset-credentials: \n")
 		credentialsCmd.PrintDefaults()
-		fmt.Printf("get: \n")
+		fmt.Printf("\nget: \n")
 		getCmd.PrintDefaults()
-		fmt.Printf("delete: \n")
+		fmt.Printf("\ndelete: \n")
 		deleteCmd.PrintDefaults()
-
 	default:
 		os.Exit(1)
 	}

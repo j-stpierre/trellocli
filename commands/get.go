@@ -21,17 +21,24 @@ type label struct {
 
 func Get(cfg config.GetConfig) {
 	fmt.Println("Subcommand: get")
-	fmt.Printf("Label: %s", cfg.Label)
+	fmt.Printf("Label: %s\n", cfg.Label)
 
 	credentials := GetCredentials()
 
-	getCards(credentials.BoardId, credentials.APIKey, credentials.Token)
-	//Filter by label
+	cards := getCards(credentials.BoardId, credentials.APIKey, credentials.Token)
+
+	if cfg.Label != "" {
+		cards = filterCards(cards, cfg.Label)
+	}
+
+	for _, card := range cards {
+		fmt.Printf("Card: %s", card)
+	}
+
 	//Save CSV
 }
 
-func getCards(boardid string, apikey string, apitoken string) {
-	// https://api.trello.com/1/boards/{BOARDID}/cards?key={APIKEY}&token={APITOKEN}
+func getCards(boardid string, apikey string, apitoken string) []cardresponse {
 
 	url := fmt.Sprintf("https://api.trello.com/1/boards/%s/cards?key=%s&token=%s", boardid, apikey, apitoken)
 
@@ -53,14 +60,21 @@ func getCards(boardid string, apikey string, apitoken string) {
 		fmt.Printf("Error decoding JSON: %s", err)
 	}
 
-	for _, card := range cards {
-		fmt.Printf("Card: %s", card)
-
-	}
+	return cards
 }
 
-func filterCards() {
+func filterCards(cards []cardresponse, filter string) (filtered []cardresponse) {
 
+	for _, card := range cards {
+		for _, label := range card.Labels {
+			if label.Name == filter {
+				filtered = append(filtered, card)
+				break
+			}
+		}
+	}
+
+	return filtered
 }
 
 func saveCSV() {
