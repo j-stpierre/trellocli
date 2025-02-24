@@ -24,6 +24,7 @@ func main() {
 
 	if len(os.Args) < 2 {
 		fmt.Println("Expected sub-command")
+
 		os.Exit(1)
 	}
 
@@ -41,8 +42,15 @@ func main() {
 		deleteCmd.Parse(os.Args[2:])
 		cfg := config.DeleteConfig{File: *filePtr}
 		commands.Delete(cfg)
+	case "-h", "--help":
+		fmt.Printf("set-credentials: \n")
+		credentialsCmd.PrintDefaults()
+		fmt.Printf("get: \n")
+		getCmd.PrintDefaults()
+		fmt.Printf("delete: \n")
+		deleteCmd.PrintDefaults()
+
 	default:
-		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
