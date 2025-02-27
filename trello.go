@@ -20,7 +20,7 @@ func main() {
 	//outputPtr := getCmd.String("output", "csv", "Format to output results as")
 
 	deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
-	filePtr := deleteCmd.String("file", "output.csv", "Path to file with elements to delete")
+	filePtr := deleteCmd.String("file", "cards.csv", "Path to file with elements to delete")
 
 	if len(os.Args) < 2 {
 		fmt.Println("Expected sub-command")

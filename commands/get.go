@@ -81,12 +81,22 @@ func filterCards(cards []cardresponse, filter string) (filtered []cardresponse) 
 func saveCSV(cards []cardresponse) {
 
 	saves := [][]string{
-		{"id", "name"},
+		{"id", "name", "labels"},
 	}
 
 	for _, card := range cards {
 
-		entry := []string{card.ID, card.Name}
+		labels := ""
+		if len(card.Labels) > 0 {
+
+			for _, label := range card.Labels {
+				labels = fmt.Sprintf("%s, %s", labels, label.Name)
+			}
+			labels = labels[2:]
+
+		}
+
+		entry := []string{card.ID, card.Name, labels}
 		saves = append(saves, entry)
 	}
 
