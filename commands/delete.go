@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sync"
 	"trellocli/config"
 )
 
@@ -28,27 +29,38 @@ func Delete(cfg config.DeleteConfig) {
 
 func deleteCards(apikey string, apitoken string, cards []card) {
 
+	var wg sync.WaitGroup
+
 	for _, card := range cards {
 
-		client := &http.Client{}
+		wg.Add(1)
 
-		url := fmt.Sprintf("https://api.trello.com/1/cards/%s?key=%s&token=%s", card.id, apikey, apitoken)
+		go func() {
+			defer wg.Done()
 
-		req, err := http.NewRequest("DELETE", url, nil)
+			client := &http.Client{}
 
-		if err != nil {
-			fmt.Println("Error building delete request: ", err)
-		}
+			url := fmt.Sprintf("https://api.trello.com/1/cards/%s?key=%s&token=%s", card.id, apikey, apitoken)
 
-		resp, err := client.Do(req)
+			req, err := http.NewRequest("DELETE", url, nil)
 
-		if err != nil {
-			fmt.Println("Error sending DELETE request: ", err)
-		}
+			if err != nil {
+				fmt.Println("Error building delete request: ", err)
+			}
 
-		defer resp.Body.Close()
+			resp, err := client.Do(req)
+
+			if err != nil {
+				fmt.Println("Error sending DELETE request: ", err)
+			}
+
+			defer resp.Body.Close()
+
+		}()
 
 	}
+
+	wg.Wait()
 
 }
 
